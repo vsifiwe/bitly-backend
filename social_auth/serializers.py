@@ -2,6 +2,7 @@ from rest_framework import serializers
 from . import google
 from rest_framework.exceptions import AuthenticationFailed
 from .register import register_social_user
+import os
 
 class GoogleSocialAuthSerializer(serializers.Serializer):
     auth_token = serializers.CharField()
