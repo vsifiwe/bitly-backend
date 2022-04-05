@@ -39,6 +39,12 @@ class shortUrlView(generics.RetrieveUpdateAPIView):
         try:
             pk = self.kwargs.get('pk')
             u = url.objects.get(uuid=pk)
+
+            # increment impressions
+            impressions = u.impressions + 1
+            u.impressions = impressions
+            u.save()
+
             return redirect(u.long_url)
         except url.DoesNotExist:
             return Response({"message": "The link you are trying to reach does not exist"})

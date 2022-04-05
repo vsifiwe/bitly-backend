@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import createShortUrl, viewShortUrl, shortUrlView
+from .views import createShortUrl, shortUrlView
 
 urlpatterns = [
     path('test/', createShortUrl, name='test'),
