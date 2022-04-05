@@ -8,6 +8,8 @@ import simpleUID
 from django.shortcuts import redirect
 from rest_framework import generics
 from .permissions import ReadOnly
+import ipinfo
+import os
 
 
 @api_view(['POST'])
@@ -45,6 +47,38 @@ class shortUrlView(generics.RetrieveUpdateAPIView):
             u.impressions = impressions
             u.save()
 
+            handler = ipinfo.getHandler(os.environ.get('IP_ACCESS_TOKEN'))
+            details = handler.getDetails(request.META.get('REMOTE_ADDR'))
+            data = {
+                'country': details.country,
+                'city': details.city
+            }
+            print(request.META.get('REMOTE_ADDR'))
+            print(data)
             return redirect(u.long_url)
         except url.DoesNotExist:
             return Response({"message": "The link you are trying to reach does not exist"})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMyUrls(request):
+
+    try:
+        u = url.objects.filter(owner=request.user.id)
+        urls = urlSerializer(u, many=True).data
+        return Response({"message": urls})
+    except url.DoesNotExist:
+        return Response({"message": "you do not have any short urls"})
+
+
+@api_view(['GET'])
+def testIP(request):
+    handler = ipinfo.getHandler(os.environ.get('IP_ACCESS_TOKEN'))
+    details = handler.getDetails(request.META.get('REMOTE_ADDR'))
+    data = {
+        'country': details.country,
+        'city': details.city,
+        'ip': request.META.get('REMOTE_ADDR')
+    }
+    return Response({"message": data})
