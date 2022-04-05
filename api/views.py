@@ -74,6 +74,7 @@ def getMyUrls(request):
 
 @api_view(['GET'])
 def testIP(request):
+    print(request.META.get('REMOTE_ADDR'))
     handler = ipinfo.getHandler(os.environ.get('IP_ACCESS_TOKEN'))
     details = handler.getDetails(request.META.get('REMOTE_ADDR'))
     data = {
@@ -81,4 +82,5 @@ def testIP(request):
         'city': details.city,
         'ip': request.META.get('REMOTE_ADDR')
     }
+    print(data)
     return Response({"message": data})
