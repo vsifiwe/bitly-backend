@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import django_heroku
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -49,7 +50,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'authentication',
-    "corsheaders",
+    'corsheaders',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -93,6 +95,16 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
 }
 
 ROOT_URLCONF = 'bitly.urls'
@@ -174,5 +186,4 @@ REST_FRAMEWORK = {
     )
 }
 
-import django_heroku
 django_heroku.settings(locals())
