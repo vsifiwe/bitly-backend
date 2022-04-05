@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'authentication',
     'corsheaders',
     'api.apps.ApiConfig',
+    'django_user_agents',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
 ]
 
 SIMPLE_JWT = {
@@ -185,5 +187,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+USER_AGENTS_CACHE = None
 
 django_heroku.settings(locals())

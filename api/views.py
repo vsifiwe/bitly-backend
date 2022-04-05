@@ -1,3 +1,4 @@
+import re
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +11,7 @@ from rest_framework import generics
 from .permissions import ReadOnly
 import ipinfo
 import os
+from .helpers import deviceType
 
 
 @api_view(['POST'])
@@ -74,18 +76,18 @@ def getMyUrls(request):
 
 @api_view(['GET'])
 def testIP(request):
+
     if 'HTTP_X_FORWARDED_FOR' in request.META:
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         ip = x_forwarded_for.split(',')[0]
     else:
         ip = request.META.get('REMOTE_ADDR')
-    print(ip)
     handler = ipinfo.getHandler(os.environ.get('IP_ACCESS_TOKEN'))
     details = handler.getDetails(ip)
     data = {
         'country': details.country,
         'city': details.city,
-        'ip': request.META.get('REMOTE_ADDR')
+        'ip': ip,
+        'device': deviceType(request)
     }
-    print(data)
     return Response({"message": data})
