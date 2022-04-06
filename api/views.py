@@ -2,9 +2,9 @@ import re
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from api.serializers import urlSerializer
+from api.serializers import DeviceSerializer, urlSerializer
 from rest_framework import status
-from .models import url
+from .models import Device, url
 import simpleUID
 from django.shortcuts import redirect
 from rest_framework import generics
@@ -69,7 +69,9 @@ class shortUrlView(generics.RetrieveUpdateAPIView):
                 'os': dev['os'],
                 'browser': dev['browser']
             }
-            print(data)
+            d = DeviceSerializer(data=data)
+            if d.is_valid():
+                d.save()
             return redirect(u.long_url)
         except url.DoesNotExist:
             return Response({"message": "The link you are trying to reach does not exist"})
@@ -82,7 +84,17 @@ def getMyUrls(request):
     try:
         u = url.objects.filter(owner=request.user.id)
         urls = urlSerializer(u, many=True).data
-        return Response({"message": urls})
+        devInfo = []
+        views = 0
+        for x in urls:
+            x['shortUrl'] = os.environ.get("SHORT_BASE_URL") + x['uuid']
+            d = Device.objects.filter(url=x['id'])
+            data = DeviceSerializer(d, many=True).data
+            x['data'] = data
+            for y in data:
+                devInfo.append(y)
+            views = views + x['impressions']
+        return Response({"shorturls": urls, "totalViews": views, "deviceInfo": devInfo})
     except url.DoesNotExist:
         return Response({"message": "you do not have any short urls"})
 

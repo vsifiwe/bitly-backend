@@ -11,3 +11,15 @@ class url(models.Model):
 
     def __str__(self) -> str:
         return self.long_url
+
+
+class Device(models.Model):
+    url = models.ForeignKey(url, on_delete=models.CASCADE)
+    country = models.CharField(max_length=50)
+    city = models.CharField(max_length=100)
+    ip = models.CharField(max_length=50)
+    os = models.CharField(max_length=50)
+    browser = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return self.ip
