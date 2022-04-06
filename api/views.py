@@ -49,13 +49,26 @@ class shortUrlView(generics.RetrieveUpdateAPIView):
             u.impressions = impressions
             u.save()
 
+            if 'HTTP_X_FORWARDED_FOR' in request.META:
+                x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                # ip = request.META.get('REMOTE_ADDR')
+                ip = '196.12.140.219'
+
+            # Documentation: https: // github.com/ipinfo/python
+            # Get Token from https: // ipinfo.io/account/home
             handler = ipinfo.getHandler(os.environ.get('IP_ACCESS_TOKEN'))
-            details = handler.getDetails(request.META.get('REMOTE_ADDR'))
+            details = handler.getDetails(ip)
+            dev = deviceType(request)
             data = {
+                'url': u.id,
                 'country': details.country,
-                'city': details.city
+                'city': details.city,
+                'ip': ip,
+                'os': dev['os'],
+                'browser': dev['browser']
             }
-            print(request.META.get('REMOTE_ADDR'))
             print(data)
             return redirect(u.long_url)
         except url.DoesNotExist:
@@ -84,10 +97,13 @@ def testIP(request):
         ip = request.META.get('REMOTE_ADDR')
     handler = ipinfo.getHandler(os.environ.get('IP_ACCESS_TOKEN'))
     details = handler.getDetails(ip)
+    dev = deviceType(request)
     data = {
         'country': details.country,
         'city': details.city,
         'ip': ip,
-        'device': deviceType(request)
+        'os': dev['os'],
+        'browser': dev['browser']
     }
+    print(data)
     return Response({"message": data})
