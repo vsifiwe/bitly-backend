@@ -1,3 +1,4 @@
+import csv
 import re
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -11,7 +12,7 @@ from rest_framework import generics
 from .permissions import ReadOnly
 import ipinfo
 import os
-from .helpers import deviceType
+from .helpers import deviceType, decode_utf8
 
 
 @api_view(['POST'])
@@ -121,3 +122,29 @@ def testIP(request):
     }
     print(data)
     return Response({"message": data})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def bulkShorten(request):
+    file = request.FILES['csv_file']
+    csv_file = csv.DictReader(decode_utf8(file))
+    try:
+        for row in csv_file:
+            data = {
+                'long_url': row['Link'],
+                'uuid': simpleUID.string(),
+                'impressions': 0,
+                'owner': request.user.id
+            }
+
+            # check if url is valid
+
+            # create a url instance
+            serializer = urlSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+    except:
+        return Response({"message": "error"})
+
+    return Response({"message": "success"})

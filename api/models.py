@@ -5,7 +5,7 @@ from authentication.models import User
 
 class url(models.Model):
     uuid = models.CharField(max_length=10)
-    long_url = models.CharField(max_length=200)
+    long_url = models.TextField()
     impressions = models.IntegerField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
