@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from . import google,facebook
+from . import google, facebook
 from rest_framework.exceptions import AuthenticationFailed
 from .register import register_social_user
 import os
+
 
 class GoogleSocialAuthSerializer(serializers.Serializer):
     auth_token = serializers.CharField()
@@ -27,6 +28,7 @@ class GoogleSocialAuthSerializer(serializers.Serializer):
 
         return register_social_user(
             provider=provider, user_id=user_id, email=email, name=name)
+
 
 class FacebookSocialAuthSerializer(serializers.Serializer):
     """Handles serialization of facebook related data"""

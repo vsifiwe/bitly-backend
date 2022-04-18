@@ -1,12 +1,13 @@
-import re
-
-
 def deviceType(request):
-    return request.user_agent.browser.family
-    MOBILE_AGENT_RE = re.compile(
-        r".*(iphone|mobile|androidtouch)", re.IGNORECASE)
+    # Documentation: https: // github.com/selwin/django-user_agents
+    # based on https: // github.com/selwin/python-user-agents
+    data = {
+        'os': request.user_agent.os.family,
+        'browser': request.user_agent.browser.family,
+    }
+    return data
 
-    if MOBILE_AGENT_RE.match(request.META['HTTP_USER_AGENT']):
-        return "mobile"
-    else:
-        return request.META['HTTP_USER_AGENT']
+
+def decode_utf8(input_iterator):
+    for l in input_iterator:
+        yield l.decode('utf-8')
