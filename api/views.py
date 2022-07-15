@@ -13,6 +13,7 @@ from .permissions import ReadOnly
 import ipinfo
 import os
 from .helpers import deviceType, decode_utf8
+from geopy.geocoders import Nominatim
 
 
 @api_view(['POST'])
@@ -148,3 +149,10 @@ def bulkShorten(request):
         return Response({"message": "error"})
 
     return Response({"message": "success"})
+
+
+@api_view(['GET'])
+def testGeoCode(request):
+    geolocator = Nominatim(user_agent="myGeocoder")
+    location = geolocator.reverse("-1.9634 , 30.1349")
+    return Response({"message": location.raw})
