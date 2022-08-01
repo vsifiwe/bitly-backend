@@ -34,7 +34,7 @@ ALLOWED_HOSTS = []
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://shorturl-amalitech.netlify.app",
-    "https://dashboard.amalitech.me/"
+    "https://dashboard.amalitech.me"
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
